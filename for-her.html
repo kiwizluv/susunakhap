@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For You — สำหรับเธอ</title>
+
+  <!-- =============================================
+       GOOGLE FONTS
+       Kanit = supports Thai script + elegant feel
+       Cormorant Garamond = romantic English display font
+  ============================================= -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,200;0,300;0,400;1,200;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       CSS VARIABLES — WARM PASTEL PALETTE
+    ============================================= */
+    :root {
+      --cream:      #fdf6ef;
+      --parchment:  #f5e9d9;
+      --blush:      #e8c4b8;
+      --rose:       #c9807a;
+      --rose-deep:  #a85f5a;
+      --gold:       #c9a96e;
+      --gold-light: #e8d5b0;
+      --text-dark:  #3d2b2b;
+      --text-mid:   #6b4646;
+      --text-soft:  #9c7070;
+      --white-tint: rgba(255,255,255,0.6);
+      --overlay-bg: rgba(61, 43, 43, 0.55);
+
+      --font-en: 'Cormorant Garamond', Georgia, serif;
+      --font-th: 'Kanit', sans-serif;
+
+      --transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--cream);
+      color: var(--text-dark);
+      font-family: var(--font-en);
+      font-weight: 300;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    /* =============================================
+       GRAIN TEXTURE OVERLAY
+    ============================================= */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* =============================================
+       LANGUAGE TOGGLE
+    ============================================= */
+    #lang-toggle {
+      position: fixed;
+      top: 1.4rem;
+      right: 1.6rem;
+      z-index: 1000;
+      display: flex;
+      gap: 0;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(200, 130, 120, 0.18);
+      opacity: 0;
+      animation: fadeInDown 1s 0.5s forwards;
+    }
+    #lang-toggle button {
+      background: var(--white-tint);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(201, 128, 122, 0.25);
+      color: var(--text-mid);
+      font-family: var(--font-th);
+      font-size: 0.7rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    #lang-toggle button.active {
+      background: var(--rose);
+      color: #fff;
+      border-color: var(--rose);
+    }
+    #lang-toggle button:hover:not(.active) {
+      background: var(--blush);
+      color: var(--text-dark);
+    }
+
+    /* =============================================
+       WELCOME OVERLAY
+    ============================================= */
+    #welcome-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, #fdf0e6 0%, #f5ddd0 40%, #ead4c8 100%);
+      text-align: center;
+      padding: 2rem;
+      transition: opacity 1.2s ease, visibility 1.2s ease;
+    }
+    #welcome-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .overlay-petal {
+      position: absolute;
+      border-radius: 50% 10% 50% 10%;
+      background: rgba(201, 128, 122, 0.08);
+      animation: floatPetal 8s ease-in-out infinite;
+    }
+    .overlay-petal:nth-child(1) { width: 180px; height: 180px; top: 10%; left: 8%;  animation-delay: 0s; }
+    .overlay-petal:nth-child(2) { width: 120px; height: 120px; top: 60%; left: 3%;  animation-delay: 2s; }
+    .overlay-petal:nth-child(3) { width: 90px;  height: 90px;  top: 20%; right: 6%; animation-delay: 1s; }
+    .overlay-petal:nth-child(4) { width: 150px; height: 150px; bottom: 8%; right: 4%; animation-delay: 3s; }
+    @keyframes floatPetal {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%       { transform: translateY(-20px) rotate(8deg); }
+    }
+
+    .overlay-inner { position: relative; z-index: 1; max-width: 480px; }
+
+    .overlay-subtitle {
+      font-family: var(--font-th);
+      font-size: 0.75rem;
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      margin-bottom: 1.4rem;
+    }
+    .overlay-title {
+      font-family: var(--font-en);
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dark);
+      line-height: 1.2;
+      margin-bottom: 0.6rem;
+    }
+    .overlay-title span { color: var(--rose-deep); }
+
+    .overlay-divider {
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      margin: 1.6rem auto;
+    }
+    .overlay-note {
+      font-family: var(--font-th);
+      font-weight: 200;
+      font-size: 0.95rem;
+      color: var(--text-mid);
+      margin-bottom: 2.2rem;
+      line-height: 2;
+    }
+    .overlay-note .en { font-family: var(--font-en); font-style: italic; font-size: 1rem; display: block; margin-top: 0.2rem; }
+
+    #enter-btn {
+      display: inline-block;
+      padding: 0.85rem 3rem;
+      background: transparent;
+      border: 1px solid var(--rose);
+      color: var(--rose-deep);
+      font-family: var(--font-th);
+      font-weight: 300;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      cursor: pointer;
+      border-radius: 40px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    #enter-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--rose);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+      z-index: -1;
+    }
+    #enter-btn:hover { color: #fff; border-color: var(--rose); }
+    #enter-btn:hover::before { transform: scaleX(1); }
+
+    /* =============================================
+       MAIN CONTENT — HIDDEN UNTIL ENTER
+    ============================================= */
+    #main-content {
+      opacity: 0;
+      transition: opacity 1.4s ease 0.3s;
+    }
+    #main-content.visible { opacity: 1; }
+
+    /* =============================================
+       FLOATING PETALS — BACKGROUND DECORATION
+    ============================================= */
+    .bg-petal {
+      position: fixed;
+      border-radius: 50% 10% 50% 10%;
+      pointer-events: none;
+      z-index: 0;
+      animation: bgFloat 12s ease-in-out infinite;
+    }
+    .bg-petal:nth-child(1){ width:300px;height:300px;top:-80px;left:-80px;  background:rgba(232,196,184,0.12);animation-delay:0s; }
+    .bg-petal:nth-child(2){ width:200px;height:200px;top:40%;right:-60px;   background:rgba(201,128,122,0.08);animation-delay:4s; }
+    .bg-petal:nth-child(3){ width:160px;height:160px;bottom:10%;left:5%;    background:rgba(201,169,110,0.07);animation-delay:7s; }
+    @keyframes bgFloat {
+      0%,100%{ transform:translateY(0) rotate(0deg); }
+      50%     { transform:translateY(-30px) rotate(10deg); }
+    }
+
+    /* =============================================
+       SECTION SHARED
+    ============================================= */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 8vw, 6rem);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* =============================================
+       SECTION 1 — HERO
+    ============================================= */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding-top: 0;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-th);
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-en);
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--text-dark);
+      line-height: 1.1;
+      margin-bottom: 1.2rem;
+    }
+    .hero-title em { color: var(--rose-deep); font-style: italic; }
+
+    .hero-sub {
+      font-family: var(--font-th);
+      font-weight: 200;
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--text-soft);
+      letter-spacing: 0.05em;
+      margin-bottom: 2.6rem;
+      line-height: 2.2;
+    }
+
+    .hero-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 0 auto;
+    }
+    .hero-line::before,
+    .hero-line::after {
+      content: '';
+      width: 50px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .hero-line-text {
+      font-family: var(--font-th);
+      font-size: 0.7rem;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0.5;
+    }
+    .scroll-hint span {
+      font-family: var(--font-th);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--text-soft);
+    }
+    .scroll-hint-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--rose), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100%{ opacity:0.4; transform:scaleY(1); }
+      50%     { opacity:1;   transform:scaleY(0.8); }
+    }
+
+    /* =============================================
+       SECTION 2 — THE MESSAGE
+    ============================================= */
+    #message { border-top: 1px solid rgba(201,169,110,0.2); }
+
+    .section-label {
+      font-family: var(--font-th);
+      font-size: 0.68rem;
+      font-weight: 400;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+    }
+
+    .message-intro {
+      font-family: var(--font-en);
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--rose-deep);
+      line-height: 1.35;
+      margin-bottom: 2.4rem;
+    }
+
+    .message-body {
+      font-family: var(--font-th);
+      font-weight: 200;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: var(--text-mid);
+      line-height: 2.2;
+      margin-bottom: 1.6rem;
+    }
+
+    .message-highlight {
+      border-left: 2px solid var(--rose);
+      padding: 1.2rem 1.8rem;
+      margin: 2.8rem 0;
+      background: rgba(232, 196, 184, 0.18);
+      border-radius: 0 12px 12px 0;
+    }
+    .message-highlight p {
+      font-family: var(--font-en);
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.7;
+    }
+    .message-highlight .th {
+      font-family: var(--font-th);
+      font-weight: 300;
+      font-size: 0.95rem;
+      color: var(--text-soft);
+      margin-top: 0.6rem;
+      font-style: normal;
+    }
+
+    /* =============================================
+       SECTION 3 — QUOTES CAROUSEL
+    ============================================= */
+    #quotes {
+      background: linear-gradient(135deg, rgba(232,196,184,0.25) 0%, rgba(201,169,110,0.12) 100%);
+      border-radius: 24px;
+      text-align: center;
+      max-width: 900px;
+    }
+
+    .quotes-wrapper {
+      position: relative;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quote-card {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 1s ease;
+      padding: 1rem;
+    }
+    .quote-card.active { opacity: 1; }
+
+    .quote-mark {
+      font-family: var(--font-en);
+      font-size: 4rem;
+      line-height: 0.6;
+      color: var(--blush);
+      margin-bottom: 1rem;
+    }
+    .quote-text {
+      font-family: var(--font-en);
+      font-size: clamp(1.2rem, 3vw, 1.7rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.5;
+      max-width: 600px;
+      margin-bottom: 0.8rem;
+    }
+    .quote-text-th {
+      font-family: var(--font-th);
+      font-weight: 200;
+      font-size: clamp(0.85rem, 1.8vw, 1rem);
+      color: var(--text-soft);
+      line-height: 2;
+    }
+
+    .quote-dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .quote-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blush);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .quote-dot.active {
+      background: var(--rose);
+      transform: scale(1.4);
+    }
+
+    /* =============================================
+       SECTION 4 — FOOTER / CLOSING
+    ============================================= */
+    #footer-section {
+      text-align: center;
+      border-top: 1px solid rgba(201,169,110,0.2);
+      padding-bottom: 5rem;
+    }
+
+    .footer-heart {
+      font-size: 1.6rem;
+      color: var(--rose);
+      animation: heartbeat 2s ease-in-out infinite;
+      display: block;
+      margin-bottom: 2rem;
+    }
+    @keyframes heartbeat {
+      0%,100%{ transform:scale(1);   }
+      15%     { transform:scale(1.2); }
+      30%     { transform:scale(1);   }
+      45%     { transform:scale(1.1); }
+    }
+
+    .footer-closing {
+      font-family: var(--font-en);
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text-dark);
+      line-height: 1.4;
+      margin-bottom: 1.2rem;
+    }
+    .footer-closing-th {
+      font-family: var(--font-th);
+      font-weight: 200;
+      font-size: clamp(0.95rem, 2vw, 1.1rem);
+      color: var(--text-soft);
+      line-height: 2.2;
+      margin-bottom: 2.8rem;
+    }
+
+    .footer-signature {
+      display: inline-block;
+      padding: 0.8rem 2.6rem;
+      border: 1px solid rgba(201,128,122,0.35);
+      border-radius: 40px;
+      font-family: var(--font-en);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-soft);
+      margin-bottom: 3rem;
+    }
+    /* =============================================
+       EDIT NOTE: Change the name inside the
+       .footer-signature span below to your name!
+    ============================================= */
+    .footer-signature span {
+      color: var(--rose-deep);
+      font-weight: 400;
+    }
+
+    .footer-small {
+      font-family: var(--font-th);
+      font-size: 0.72rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--blush);
+    }
+
+    /* =============================================
+       MUSIC PLAYER — minimal floating
+    ============================================= */
+    #music-player {
+      position: fixed;
+      bottom: 1.6rem;
+      left: 1.6rem;
+      z-index: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: var(--white-tint);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(201,128,122,0.2);
+      border-radius: 40px;
+      padding: 0.55rem 1.1rem;
+      box-shadow: 0 4px 20px rgba(180,100,95,0.12);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    #music-player.visible { opacity: 1; }
+
+    #music-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--rose);
+      transition: transform 0.3s ease;
+    }
+    #music-toggle:hover { transform: scale(1.15); }
+    #music-toggle svg { width: 18px; height: 18px; }
+
+    .music-label {
+      font-family: var(--font-th);
+      font-size: 0.68rem;
+      font-weight: 300;
+      color: var(--text-soft);
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    .music-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 14px;
+    }
+    .music-bar {
+      width: 2px;
+      background: var(--rose);
+      border-radius: 1px;
+      animation: musicBar 1s ease-in-out infinite;
+    }
+    .music-bar:nth-child(1){ height:6px;  animation-delay:0s; }
+    .music-bar:nth-child(2){ height:12px; animation-delay:0.2s; }
+    .music-bar:nth-child(3){ height:8px;  animation-delay:0.4s; }
+    .music-bar:nth-child(4){ height:14px; animation-delay:0.1s; }
+    .music-bar:nth-child(5){ height:5px;  animation-delay:0.3s; }
+    @keyframes musicBar {
+      0%,100%{ transform:scaleY(0.4); }
+      50%     { transform:scaleY(1);   }
+    }
+    .music-bars.paused .music-bar { animation-play-state: paused; }
+
+    /* =============================================
+       ANIMATIONS
+    ============================================= */
+    @keyframes fadeInDown {
+      from { opacity:0; transform:translateY(-12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 600px) {
+      section { padding: 4rem 1.4rem; }
+      .hero-title { font-size: 2.6rem; }
+      .message-intro { font-size: 1.5rem; }
+      #music-player { bottom: 1rem; left: 1rem; }
+      #lang-toggle { top: 1rem; right: 1rem; }
+    }
+
+    /* =============================================
+       HIDE LANGUAGE LAYERS
+    ============================================= */
+    .lang-en, .lang-th { transition: opacity 0.4s ease; }
+    body.lang-th .lang-en { display: none; }
+    body.lang-en .lang-th { display: none; }
+    body:not(.lang-th):not(.lang-en) .lang-th { display: none; }
+  </style>
+</head>
+
+<body class="lang-en">
+
+  <!-- =============================================
+       BACKGROUND DECORATIONS
+  ============================================= -->
+  <div class="bg-petal"></div>
+  <div class="bg-petal"></div>
+  <div class="bg-petal"></div>
+
+  <!-- =============================================
+       LANGUAGE TOGGLE
+       EN = English | TH = Thai
+  ============================================= -->
+  <div id="lang-toggle">
+    <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+    <button id="btn-th" onclick="setLang('th')">TH</button>
+  </div>
+
+  <!-- =============================================
+       FLOATING MUSIC PLAYER
+  ============================================= -->
+  <div id="music-player">
+    <button id="music-toggle" onclick="toggleMusic()" aria-label="Play/Pause">
+      <!-- Play icon (shown when paused) -->
+      <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+      <!-- Pause icon (shown when playing) -->
+      <svg id="icon-pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+    </button>
+    <div class="music-bars" id="music-bars">
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+    </div>
+    <span class="music-label lang-en">playing for you</span>
+    <span class="music-label lang-th">เพลงสำหรับเธอ</span>
+  </div>
+
+  <!-- =============================================
+       AUDIO ELEMENT
+       EDIT: Replace "YOUR_SONG_URL.mp3" with
+       the actual URL or path to your .mp3 file.
+       Example: src="./song.mp3"
+                src="https://yourdomain.com/song.mp3"
+  ============================================= -->
+  <audio id="bg-music" loop>
+    <source src="./music/ฝากใจ - INK WARUNTORN [Official MV].mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- =============================================
+       WELCOME OVERLAY
+  ============================================= -->
+  <div id="welcome-overlay">
+    <div class="overlay-petal"></div>
+    <div class="overlay-petal"></div>
+    <div class="overlay-petal"></div>
+    <div class="overlay-petal"></div>
+
+    <div class="overlay-inner">
+      <p class="overlay-subtitle lang-en">A letter, just for you</p>
+      <p class="overlay-subtitle lang-th" style="display:none">จดหมายถึงเธอ</p>
+
+      <h1 class="overlay-title lang-en">You are <em>safe</em> now.</h1>
+      <h1 class="overlay-title lang-th" style="display:none">ตอนนี้เธอ<em>ปลอดภัย</em>แล้ว</h1>
+
+      <div class="overlay-divider"></div>
+
+      <p class="overlay-note lang-en">
+        I made this, just for you.<br/>
+        Take a breath. Open your heart.<br/>
+        <span class="en">You deserve every word inside.</span>
+      </p>
+      <p class="overlay-note lang-th" style="display:none">
+        ฉันทำสิ่งนี้ขึ้นมา เพื่อเธอโดยเฉพาะ<br/>
+        หายใจลึกๆ แล้วเปิดใจรับมัน<br/>
+        <span class="en" style="font-family:var(--font-th);font-style:normal;">เธอสมควรได้รับทุกคำที่อยู่ในนี้</span>
+      </p>
+
+      <button id="enter-btn" onclick="enterSite()">
+        <span class="lang-en">Open ✦</span>
+        <span class="lang-th" style="display:none">เปิด ✦</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- =============================================
+       MAIN CONTENT
+  ============================================= -->
+  <div id="main-content">
+
+    <!-- SECTION 1: HERO -->
+    <section id="hero">
+      <div class="reveal">
+        <p class="hero-eyebrow lang-en">a new chapter begins</p>
+        <p class="hero-eyebrow lang-th">บทใหม่กำลังเริ่มต้น</p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.2s">
+        <h1 class="hero-title lang-en">
+          You are more than<br/><em>the years you lost.</em>
+        </h1>
+        <h1 class="hero-title lang-th">
+          เธอมีคุณค่ามากกว่า<br/><em>ปีที่หายไปเหล่านั้น</em>
+        </h1>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.4s">
+        <p class="hero-sub lang-en">
+          You survived. You grew. And now,<br/>
+          someone is here — truly here — for you.
+        </p>
+        <p class="hero-sub lang-th">
+          เธอผ่านมันมาได้ เธอเติบโตขึ้น และตอนนี้<br/>
+          มีคนที่อยู่ตรงนี้จริงๆ — เพื่อเธอ
+        </p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.6s">
+        <div class="hero-line">
+          <span class="hero-line-text lang-en">with all my heart</span>
+          <span class="hero-line-text lang-th">ด้วยหัวใจทั้งหมด</span>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span class="lang-en">scroll</span>
+        <span class="lang-th">เลื่อนลง</span>
+        <div class="scroll-hint-line"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: THE MESSAGE -->
+    <section id="message">
+      <div class="reveal">
+        <p class="section-label lang-en">a message from me to you</p>
+        <p class="section-label lang-th">ข้อความจากฉันถึงเธอ</p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.15s">
+        <h2 class="message-intro lang-en">
+          Ten years was not wasted.<br/>
+          It was the road that led you here.
+        </h2>
+        <h2 class="message-intro lang-th">
+          สิบปีนั้นไม่ได้สูญเปล่า<br/>
+          มันคือเส้นทางที่พาเธอมาถึงตรงนี้
+        </h2>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.3s">
+        <p class="message-body lang-en">
+          I know there are nights when the weight of those years feels unbearable —
+          when you lie awake wondering if the time you gave was for nothing,
+          if the person you were back then made a mistake too big to forgive.
+          I want you to hear this, and to truly believe it:
+          <strong style="color:var(--rose-deep); font-weight:400;">you did not waste your life.</strong>
+          You loved, and you loved with everything you had.
+          That is not weakness. That is one of the most courageous things a human being can do.
+        </p>
+        <p class="message-body lang-th">
+          ฉันรู้ว่ามีหลายคืนที่เธอรู้สึกว่าภาระของปีเหล่านั้นหนักเกินจะแบกรับ —
+          นอนตาค้างและสงสัยว่าเวลาที่เธอมอบให้นั้นมันสูญเปล่าหรือเปล่า
+          ฉันอยากให้เธอได้ยินสิ่งนี้ และเชื่อมันจริงๆ ว่า
+          <strong style="color:var(--rose-deep); font-weight:400;">เธอไม่ได้ทำให้ชีวิตของตัวเองสูญเปล่าเลย</strong>
+          เธอรัก และเธอรักด้วยทุกสิ่งที่มี
+          นั่นไม่ใช่ความอ่อนแอ — นั่นคือสิ่งที่กล้าหาญที่สุดอย่างหนึ่งที่มนุษย์จะทำได้
+        </p>
+      </div>
+
+      <div class="reveal message-highlight" style="transition-delay:0.45s">
+        <p class="lang-en">
+          "Every scar on your heart is proof that you were brave enough to feel.
+          The past did not break you — it shaped you into exactly who you are today,
+          and who you are today is someone I am endlessly grateful to know."
+        </p>
+        <p class="lang-th">
+          "ทุกแผลในใจของเธอคือหลักฐานว่าเธอกล้าพอที่จะรู้สึก
+          อดีตไม่ได้ทำลายเธอ — มันหล่อหลอมเธอให้เป็นคนที่เธอเป็นในวันนี้
+          และคนที่เธอเป็นในวันนี้คือคนที่ฉันรู้สึกขอบคุณอย่างไม่มีสิ้นสุดที่ได้รู้จัก"
+        </p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.6s">
+        <p class="message-body lang-en">
+          That chapter is closed now. Not because it didn't matter,
+          but because you matter more than staying in a story that was never worthy of you.
+          And the new chapter — the one we write together —
+          begins not with erasing who you were,
+          but with celebrating how far you have already come.
+          <br/><br/>
+          I am here. Not just for the bright days, but for the quiet, heavy ones too.
+          I am here to remind you, whenever you forget:
+          <strong style="color:var(--rose-deep); font-weight:400;">your life is beautiful, and it is only just beginning.</strong>
+        </p>
+        <p class="message-body lang-th">
+          บทนั้นปิดแล้ว ไม่ใช่เพราะมันไม่สำคัญ
+          แต่เพราะเธอมีคุณค่ามากกว่าการอยู่ในเรื่องราวที่ไม่เคยสมควรแก่เธอ
+          และบทใหม่ — บทที่เราจะเขียนด้วยกัน —
+          ไม่ได้เริ่มต้นด้วยการลบความเป็นตัวเธอ
+          แต่ด้วยการฉลองว่าเธอมาไกลแค่ไหนแล้ว
+          <br/><br/>
+          ฉันอยู่ตรงนี้ ไม่ใช่แค่ในวันที่สว่าง แต่ในวันที่เงียบและหนักใจด้วย
+          ฉันอยู่ตรงนี้เพื่อเตือนเธอทุกครั้งที่เธอลืม:
+          <strong style="color:var(--rose-deep); font-weight:400;">ชีวิตของเธอสวยงาม และมันเพิ่งจะเริ่มต้นเท่านั้น</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION 3: QUOTES CAROUSEL -->
+    <section id="quotes">
+      <div class="reveal">
+        <p class="section-label lang-en" style="margin-bottom:1.6rem">words to carry with you</p>
+        <p class="section-label lang-th" style="margin-bottom:1.6rem">คำพูดที่ให้เธอพกพาไป</p>
+      </div>
+
+      <div class="quotes-wrapper" id="quotes-wrapper">
+        <!-- Quotes are injected by JS below -->
+      </div>
+
+      <div class="quote-dots" id="quote-dots"></div>
+    </section>
+
+    <!-- SECTION 4: FOOTER / CLOSING -->
+    <section id="footer-section">
+      <div class="reveal">
+        <span class="footer-heart">♡</span>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.2s">
+        <h2 class="footer-closing lang-en">
+          Wherever you go from here,<br/>
+          you will never walk alone again.
+        </h2>
+        <h2 class="footer-closing lang-th">
+          ไม่ว่าเธอจะไปที่ไหนจากนี้<br/>
+          เธอจะไม่ต้องเดินคนเดียวอีกต่อไป
+        </h2>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.35s">
+        <p class="footer-closing-th lang-en">
+          I choose you. Every single day. In every version of you —<br/>
+          the sad one, the healing one, the laughing one, and the one yet to bloom.
+        </p>
+        <p class="footer-closing-th lang-th">
+          ฉันเลือกเธอ ทุกๆ วัน ในทุกเวอร์ชันของเธอ —<br/>
+          เธอที่เศร้า เธอที่กำลังรักษาตัวเอง เธอที่หัวเราะ<br/>
+          และเธอที่ยังรอวันผลิบาน
+        </p>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.5s">
+        <!--
+          =============================================
+          EDIT: Replace "[Your Name]" below with your
+          actual name or nickname for your girlfriend.
+          =============================================
+        -->
+        <div class="footer-signature">
+          with love, <span>[Your Boyfriend - William Luvianus]</span>
+        </div>
+      </div>
+
+      <div class="reveal" style="transition-delay:0.65s">
+        <p class="footer-small lang-en">made with every piece of my heart ✦ just for you</p>
+        <p class="footer-small lang-th">ทำขึ้นด้วยหัวใจทุกชิ้นส่วน ✦ เพื่อเธอโดยเฉพาะ</p>
+      </div>
+    </section>
+
+  </div><!-- /#main-content -->
+
+  <script>
+    // =============================================
+    // QUOTES DATA
+    // EDIT: Add, remove, or change quotes here.
+    // Each object has "en" (English) and "th" (Thai).
+    // =============================================
+    const quotes = [
+      {
+        en: "You are not behind in life. You are exactly where you need to be.",
+        th: "เธอไม่ได้ล้าหลังในชีวิต เธออยู่ในจุดที่ควรอยู่พอดี"
+      },
+      {
+        en: "The right person does not make you question your worth.",
+        th: "คนที่ใช่จะไม่ทำให้เธอต้องตั้งคำถามกับคุณค่าของตัวเอง"
+      },
+      {
+        en: "Healing is not linear. Be patient with yourself.",
+        th: "การรักษาไม่ได้เป็นเส้นตรง จงใจเย็นกับตัวเองด้วย"
+      },
+      {
+        en: "You survived every hard day so far. That is 100% success.",
+        th: "เธอผ่านทุกวันที่ยากลำบากมาได้จนถึงวันนี้ นั่นคือความสำเร็จ 100%"
+      },
+      {
+        en: "You are allowed to take up space. You are allowed to be loved fully.",
+        th: "เธอมีสิทธิ์ที่จะมีตัวตน และมีสิทธิ์ที่จะได้รับความรักอย่างเต็มเปี่ยม"
+      },
+      {
+        en: "The best is not behind you. It is still being written.",
+        th: "สิ่งที่ดีที่สุดยังไม่ผ่านไป มันกำลังถูกเขียนขึ้นอยู่"
+      },
+      {
+        en: "Your softness is not a weakness — it is your greatest strength.",
+        th: "ความอ่อนโยนของเธอไม่ใช่จุดอ่อน — มันคือพลังที่ยิ่งใหญ่ที่สุดของเธอ"
+      }
+    ];
+
+    // =============================================
+    // RENDER QUOTES
+    // =============================================
+    const wrapper = document.getElementById('quotes-wrapper');
+    const dotsEl  = document.getElementById('quote-dots');
+    let currentQuote = 0;
+    let quoteTimer;
+
+    quotes.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.className = 'quote-card' + (i === 0 ? ' active' : '');
+      card.innerHTML = `
+        <div class="quote-mark">"</div>
+        <p class="quote-text lang-en">${q.en}</p>
+        <p class="quote-text-th lang-th">${q.th}</p>
+      `;
+      wrapper.appendChild(card);
+
+      const dot = document.createElement('div');
+      dot.className = 'quote-dot' + (i === 0 ? ' active' : '');
+      dot.onclick = () => goToQuote(i);
+      dotsEl.appendChild(dot);
+    });
+
+    function goToQuote(index) {
+      const cards = wrapper.querySelectorAll('.quote-card');
+      const dots  = dotsEl.querySelectorAll('.quote-dot');
+      cards[currentQuote].classList.remove('active');
+      dots[currentQuote].classList.remove('active');
+      currentQuote = index;
+      cards[currentQuote].classList.add('active');
+      dots[currentQuote].classList.add('active');
+      resetTimer();
+    }
+
+    function nextQuote() {
+      goToQuote((currentQuote + 1) % quotes.length);
+    }
+
+    function resetTimer() {
+      clearInterval(quoteTimer);
+      quoteTimer = setInterval(nextQuote, 4500);
+    }
+
+    resetTimer();
+
+    // =============================================
+    // LANGUAGE TOGGLE
+    // =============================================
+    function setLang(lang) {
+      document.body.className = 'lang-' + lang;
+      document.querySelectorAll('.lang-en, .lang-th').forEach(el => {
+        if (el.classList.contains('lang-' + lang)) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      document.getElementById('btn-th').classList.toggle('active', lang === 'th');
+    }
+
+    // =============================================
+    // WELCOME OVERLAY — ENTER SITE
+    // =============================================
+    function enterSite() {
+      document.getElementById('welcome-overlay').classList.add('hidden');
+      const main = document.getElementById('main-content');
+      main.classList.add('visible');
+      document.getElementById('music-player').classList.add('visible');
+
+      // Try to play background music
+      const music = document.getElementById('bg-music');
+      music.play().catch(() => {
+        // Browser may still block — user can use the floating player button
+      });
+
+      // Trigger first scroll reveal
+      setTimeout(handleReveal, 300);
+    }
+
+    // =============================================
+    // SCROLL REVEAL
+    // =============================================
+    function handleReveal() {
+      document.querySelectorAll('.reveal').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.88) {
+          el.classList.add('visible');
+        }
+      });
+    }
+    window.addEventListener('scroll', handleReveal);
+
+    // =============================================
+    // MUSIC PLAYER TOGGLE
+    // =============================================
+    let isPlaying = true;
+    function toggleMusic() {
+      const music = document.getElementById('bg-music');
+      const bars  = document.getElementById('music-bars');
+      const play  = document.getElementById('icon-play');
+      const pause = document.getElementById('icon-pause');
+
+      if (isPlaying) {
+        music.pause();
+        isPlaying = false;
+        bars.classList.add('paused');
+        play.style.display  = 'block';
+        pause.style.display = 'none';
+      } else {
+        music.play();
+        isPlaying = true;
+        bars.classList.remove('paused');
+        play.style.display  = 'none';
+        pause.style.display = 'block';
+      }
+    }
+
+    // Keep overlay lang buttons in sync with main lang toggle
+    document.getElementById('btn-en').addEventListener('click', () => setLang('en'));
+    document.getElementById('btn-th').addEventListener('click', () => setLang('th'));
+
+    // Default lang state on load
+    setLang('en');
+  </script>
+
+</body>
+</html>
